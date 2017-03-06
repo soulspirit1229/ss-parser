@@ -52,8 +52,8 @@ const removeEmptyLines = function removeEmptyLines(code) {
 };
 
 const preprocess = function preprocess(code) {
-  let cleanCode = removeComments(code);
-  cleanCode = removeEmptyLines(cleanCode);
+  // let cleanCode = removeComments(code);
+  let cleanCode = removeEmptyLines(code);
   // To avoid bespoke logic in the parser specifically checking the last set of topics/gambits,
   // just add a new line
   cleanCode = cleanCode.concat('\n');
@@ -126,6 +126,7 @@ const normalizeTriggers = function normalizeTriggers(data, factSystem, callback)
   });
 };
 
+//如果没有random topic，就创建random topic，并且把所有没有topic的gambits都移到random topic下面
 const collapseRandomGambits = function collapseRandomGambits(data) {
   const cleanData = _.clone(data);
   if (cleanData.gambits.length !== 0) {
@@ -148,6 +149,7 @@ const collapseRandomGambits = function collapseRandomGambits(data) {
   return cleanData;
 };
 
+//给reply和gambit生成id，并让他们的持有者持有这些id
 const splitGambitsAndReplies = function splitGambitsAndReplies(data) {
   // Moves gambits and replies into a top-level key
   const cleanData = _.clone(data);
@@ -188,6 +190,10 @@ const processConversations = function processConversations(data) {
           repliesMatched.push(id);
         }
       });
+
+      if (repliesMatched.length == 0 ) {
+        console.log("Not found reply for conversation: %s.", gambit.conversation.raw);
+      };
       gambit.conversation = repliesMatched;
     }
   });
@@ -212,7 +218,6 @@ const parseContents = function parseContents(code, factSystem, callback) {
   if (code.trim() === '') {
     return callback(null, {});
   }
-
   const preprocessed = preprocess(code);
   try {
     const parsed = parser.parse(preprocessed);

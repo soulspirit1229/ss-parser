@@ -43,7 +43,7 @@ replyFilter
     { return filter; }
 
 topicKeyword
-  = keyword:[a-zA-Z_]+ { return keyword.join(""); }
+  = keyword:[a-zA-Z_\u4e00-\u9fa5]+ { return keyword.join(""); }
 
 topicKeywords
   = "(" ws* firstKeyword:topicKeyword ws* keywords:("," ws* keyword:topicKeyword ws* { return keyword; })* ws* ")"
@@ -144,7 +144,7 @@ topic
     }
 
 string
-  = str:[a-zA-Z]+ { return { type: "string", val: str.join("")}; }
+  = str:[a-zA-Z\u4e00-\u9fa5]+ { return { type: "string", val: str.join("")}; }
 
 redirect
   = ws* "@ " redirect:[a-zA-Z_ ]+ { return redirect.join(""); }

@@ -3,3 +3,5 @@ systemDB
 *.log
 coverage/*
 lib/*
+chat/*
+data.json

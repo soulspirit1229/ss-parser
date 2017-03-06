@@ -16,27 +16,27 @@ start
   = trigger
 
 star
-  = "*" { return { raw: "*", clean: "(?:(?=^|\\s)\\s*(?:.*)(?=\\s|$)\\s*)?" }; }
-  / "(" ws* "*" ws* ")" { return { raw: "(*)", clean: "(?=^|\\s)\\s*(.*)(?=\\s|$)\\s*" }; }
+  = "*" { return { raw: "*", clean: "(?:\\s*(?:.*)(?=\\s|$)\\s*)?" }; }
+  / "(" ws* "*" ws* ")" { return { raw: "(*)", clean: "\\s*(.*)(?=\\s|$)\\s*" }; }
 
 // As far as I can tell: * and [*] are equivalent and can be empty, while (*) cannot
 // match to an empty string.
 
 starn
-  = "*" val:integer { return { raw: `*${val}`, clean: starminmax(val, val) }; }
-  / "*(" val:integer ")" { return { raw: `*(${val})`, clean: starminmax(val, val) }; }
+  = "*" val:integer { return { raw: `*${val}`, clean: `\\s*((?:[^\\s]){${val}})` }; }
+  / "*(" val:integer ")" { return { raw: `*(${val})`, clean: `\\s*((?:[^\\s]){${val}})` }; }
 
 starupton
-  = "*~" val:integer { return { raw: `*~${val}`, clean: starminmax(0, val) }; }
+  = "*~" val:integer { return { raw: `*~${val}`, clean: `\\s*((?:[^\\s]){0,${val}})` }; }
 
 starminmax
   = "*(" ws* min:integer ws* "," ws* max:integer ws* ")"
-    { return { raw: `*(${min},${max})`, clean: starminmax(min, max) }; }
+    { return { raw: `*(${min},${max})`, clean: `\\s*((?:[^\\s]){${min},${max}})` }; }
   / "*(" ws* min:integer ws* "-" ws* max:integer ws* ")"
-    { return { raw: `*(${min},${max})`, clean: starminmax(min, max) }; }
+    { return { raw: `*(${min},${max})`, clean: `\\s*((?:[^\\s]){${min},${max}})` }; }
 
 string
-  = str:[a-zA-Z]+ { return { type: "string", val: str.join("")}; }
+  = str:[a-zA-Z\u4e00-\u9fa5]+ { return { type: "string", val: str.join("")}; }
 
 cleanedString
   = wsl:ws* string:[^|()\[\]\n\r*]+ wsr:ws* { return string.join(""); }
@@ -47,7 +47,7 @@ alternates
       const cleaned = [alternate].concat(alternates).join("|");
       return {
         raw: `(${cleaned})`,
-        clean: `(?=^|\\s)\\s*(${cleaned})(?=\\s|$)\\s*`
+        clean: `\\s*(${cleaned})(?=\\s|$)\\s*`
       };
     }
 
@@ -57,14 +57,14 @@ optionals
       const cleaned = [optional].concat(optionals).join("|");
       return {
         raw: `[${cleaned}]`,
-        clean: `(?:(?:\\s|\\b)+(?:${cleaned})(?:\\s|\\b)+|(?:\\s|\\b)+)`
+        clean: `(?:(?:)+(?:${cleaned})(?:)+|(?:)+)`
       };
     }
   / "[" ws* "*" ws* "]"
     {
       return {
         raw: "[*]",
-        clean: "(?:(?:(?:\\s|\\b)+(?:.*)(?:\\s|\\b)+|(?:\\s|\\b)+)|)"
+        clean: "(?:(?:(?:)+(?:.*)(?:)+|(?:)+)|)"
       };
     }
 
@@ -73,17 +73,17 @@ EOF
 
 triggerTokens
   = wsl:ws* alternates:alternates wsr:ws*
-    { return { raw: `${wsl.join("")}${alternates.raw}${wsr.join("")}`, clean: alternates.clean } }
+    { return { raw: `${alternates.raw}`, clean: alternates.clean } }
   / wsl:ws* optionals:optionals wsr:ws*
-    { return { raw: `${wsl.join("")}${optionals.raw}${wsr.join("")}`, clean: optionals.clean } }
+    { return { raw: `${optionals.raw}`, clean: optionals.clean } }
   / wsl:ws* starn:starn wsr:ws*
-    { return { raw: `${wsl.join("")}${starn.raw}${wsr.join("")}`, clean: starn.clean }; }
+    { return { raw: `${starn.raw}`, clean: starn.clean }; }
   / wsl:ws* starupton:starupton wsr:ws*
-    { return { raw: `${wsl.join("")}${starupton.raw}${wsr.join("")}`, clean: starupton.clean }; }
+    { return { raw: `${starupton.raw}`, clean: starupton.clean }; }
   / wsl:ws* starminmax:starminmax wsr:ws*
-    { return { raw: `${wsl.join("")}${starminmax.raw}${wsr.join("")}`, clean: starminmax.clean }; }
+    { return { raw: `${starminmax.raw}`, clean: starminmax.clean }; }
   / wsl:ws* star:star wsr:ws*
-    { return { raw: `${wsl.join("")}${star.raw}${wsr.join("")}`, clean: star.clean }; }
+    { return { raw: `${star.raw}`, clean: star.clean }; }
   / string:escapedCharacter+
     { return { raw: string.join(""), clean: `${string.join("")}` };}
   / ws:ws
