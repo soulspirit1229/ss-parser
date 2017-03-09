@@ -16,8 +16,8 @@ start
   = trigger
 
 star
-  = "*" { return { raw: "*", clean: "(?:\\s*(?:.*)(?=\\s|$)\\s*)?" }; }
-  / "(" ws* "*" ws* ")" { return { raw: "(*)", clean: "\\s*(.*)(?=\\s|$)\\s*" }; }
+  = "*" { return { raw: "*", clean: "(?:\\s*(?:.*)\\s*)?" }; }
+  / "(" ws* "*" ws* ")" { return { raw: "(*)", clean: "\\s*(.*)\\s*" }; }
 
 // As far as I can tell: * and [*] are equivalent and can be empty, while (*) cannot
 // match to an empty string.
@@ -47,7 +47,7 @@ alternates
       const cleaned = [alternate].concat(alternates).join("|");
       return {
         raw: `(${cleaned})`,
-        clean: `\\s*(${cleaned})(?=\\s|$)\\s*`
+        clean: `\\s*(${cleaned})\\s*`
       };
     }
 
