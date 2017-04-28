@@ -55,8 +55,8 @@ const removeEmptyLines = function removeEmptyLines(code) {
 };
 
 const preprocess = function preprocess(code) {
-  // let cleanCode = removeComments(code);
-  let cleanCode = removeEmptyLines(code);
+  let cleanCode = removeComments(code);
+  cleanCode = removeEmptyLines(cleanCode);
   // To avoid bespoke logic in the parser specifically checking the last set of topics/gambits,
   // just add a new line
   cleanCode = cleanCode.concat('\n');
