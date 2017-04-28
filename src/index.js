@@ -106,10 +106,10 @@ const parseDirectory = function parseDirectory(path, options, callback) {
       const gambitsCount = Object.keys(gambits).length;
       const repliesCount = Object.keys(replies).length;
 
-      console.log(`Total time to process: ${(Date.now() - startTime) / 1000} seconds`);
-      console.log("Number of topics %s parsed.", topicCount);
-      console.log("Number of gambits %s parsed.", gambitsCount);
-      console.log("Number of replies %s parsed.", repliesCount);
+      // console.log(`Total time to process: ${(Date.now() - startTime) / 1000} seconds`);
+      // console.log("Number of topics %s parsed.", topicCount);
+      // console.log("Number of gambits %s parsed.", gambitsCount);
+      // console.log("Number of replies %s parsed.", repliesCount);
 
       if (topicCount !== 0 && gambitsCount !== 0 && repliesCount !== 0) {
         return callback(null, data);
@@ -126,11 +126,3 @@ export default {
   parseDirectory,
   parseFile,
 };
-
-// parseDirectory("./chat/", {} , function(err, data) {
-//         fs.writeFile("./data.json", JSON.stringify(data, null, 4), (err) => {
-//         if (err) throw err;
-//         console.log(`Saved output`);
-//         process.exit();
-//       });
-// })

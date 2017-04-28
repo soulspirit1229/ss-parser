@@ -41,4 +41,12 @@ describe('Should Parse Input', () => {
       done();
     });
   });
+
+  it('Should parse Chinese script', (done) => {
+    parser.parseDirectory(`${__dirname}/fixtures/chineseDialog`, (err, result) => {
+      should.not.exist(err);
+      // console.log(result)
+      done();
+    });
+  })
 });
