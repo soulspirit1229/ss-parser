@@ -4,3 +4,4 @@ systemDB
 coverage/*
 chat/*
 data.json
+lib
