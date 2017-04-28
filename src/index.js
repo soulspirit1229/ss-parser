@@ -106,7 +106,7 @@ const parseDirectory = function parseDirectory(path, options, callback) {
       const gambitsCount = Object.keys(gambits).length;
       const repliesCount = Object.keys(replies).length;
 
-      // console.log(`Total time to process: ${(Date.now() - startTime) / 1000} seconds`);
+      console.log(`Total time to process: ${(Date.now() - startTime) / 1000} seconds`);
       // console.log("Number of topics %s parsed.", topicCount);
       // console.log("Number of gambits %s parsed.", gambitsCount);
       // console.log("Number of replies %s parsed.", repliesCount);
